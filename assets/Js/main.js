@@ -1,39 +1,29 @@
-document.addEventListener("DOMContentLoaded", () => {
-  // === SELECTORES ===
-  const menuToggle = document.getElementById("mobile-menu");
-  const navLinks = document.getElementById("nav-links");
-  const overlay = document.getElementById("overlay");
-
-  // === FUNCIONES DE NAVEGACIÓN ===
-  const toggleMenu = () => {
-    navLinks.classList.toggle("active");
-    overlay.classList.toggle("active");
-  };
-
-  // === EVENTOS ===
-  // Abrir/Cerrar Sidebar
-  menuToggle.addEventListener("click", toggleMenu);
-
-  // Cerrar al tocar el fondo oscuro
-  overlay.addEventListener("click", toggleMenu);
-
-  // === INTERACCIÓN DE ENLACES ===
-  const links = document.querySelectorAll(".nav-links li");
-  links.forEach((link) => {
-    link.addEventListener("click", () => {
-      if (window.innerWidth <= 768) toggleMenu();
-    });
-  });
-
-  // Dentro de tu evento DOMContentLoaded existente:
-const navItems = document.querySelectorAll(".nav-links li");
-
-navItems.forEach(item => {
-  item.addEventListener("click", () => {
-    // Quitar la clase seleccionada de todos
-    navItems.forEach(el => el.classList.remove("selected"));
-    // Agregar al clicado
-    item.classList.add("selected");
-  });
+// Menú móvil
+const navToggle = document.getElementById("navToggle");
+const navLinks = document.getElementById("navLinks");
+navToggle.addEventListener("click", () => {
+  const isOpen = navLinks.classList.toggle("open");
+  navToggle.setAttribute("aria-expanded", isOpen);
 });
-});
+navLinks.querySelectorAll("a").forEach((a) =>
+  a.addEventListener("click", () => {
+    navLinks.classList.remove("open");
+    navToggle.setAttribute("aria-expanded", "false");
+  }),
+);
+
+// Reveal on scroll (con fallback si IntersectionObserver no dispara a tiempo)
+const revealEls = document.querySelectorAll(".reveal");
+if ("IntersectionObserver" in window) {
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) e.target.classList.add("in");
+      });
+    },
+    { threshold: 0.12 },
+  );
+  revealEls.forEach((el) => observer.observe(el));
+} else {
+  revealEls.forEach((el) => el.classList.add("in"));
+}
